@@ -276,16 +276,6 @@ const ItemConsumido = ({ restauranteId, item, onEliminar }) => {
     <div className={`border p-3 rounded ${tipoAsignacion === 'compartido' ? 'bg-blue-50' : 'bg-gray-50'}`}>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
         <div>
-          <label className="block mb-1 text-sm font-medium">Nombre</label>
-          <input
-            type="text"
-            value={item.nombre}
-            onChange={(e) => actualizarNombreItem(e.target.value)}
-            className="p-2 border rounded w-full text-sm"
-            placeholder="Nombre del ítem"
-          />
-        </div>
-        <div>
           <label className="block mb-1 text-sm font-medium">Cantidad</label>
           <input
             type="number"
@@ -294,6 +284,16 @@ const ItemConsumido = ({ restauranteId, item, onEliminar }) => {
             className="p-2 border rounded w-full text-sm"
             min="1"
             step="1"
+          />
+        </div>
+        <div>
+          <label className="block mb-1 text-sm font-medium">Nombre</label>
+          <input
+            type="text"
+            value={item.nombre}
+            onChange={(e) => actualizarNombreItem(e.target.value)}
+            className="p-2 border rounded w-full text-sm"
+            placeholder="Nombre del ítem"
           />
         </div>
         <div>

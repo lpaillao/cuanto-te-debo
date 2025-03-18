@@ -64,9 +64,9 @@ const RestauranteItem = ({ restaurante }) => {
             ...r,
             items: [...r.items, {
               id: nuevoItemId,
+              cantidad: 1,    // Cambiado de posición para mantener consistencia visual
               nombre: `Ítem ${nuevoItemId}`,
               precio: 0,
-              cantidad: 1,
               personasAsignadas: []
             }]
           };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import PersonasSection from '../components/PersonasSection';
 import RestaurantesSection from '../components/RestaurantesSection';
@@ -13,6 +13,18 @@ const CuantoTeDeboDivider = () => {
   const toggleHistorial = () => {
     setHistorialAbierto(!historialAbierto);
   };
+
+  // Añadir metadatos para Open Graph y compartir en redes sociales
+  useEffect(() => {
+    // Actualizar metadatos para facilitar compartir
+    document.title = "¿Cuánto te debo? - Divide cuentas fácilmente";
+    
+    // Si se quisiera agregar metadatos más específicos, podría hacerse con:
+    // const meta = document.createElement('meta');
+    // meta.setAttribute('property', 'og:title');
+    // meta.setAttribute('content', '¿Cuánto te debo?');
+    // document.head.appendChild(meta);
+  }, []);
 
   return (
     <>
@@ -46,7 +58,7 @@ const CuantoTeDeboDivider = () => {
       </div>
       
       <footer className="text-center text-xs text-gray-500 mb-8">
-        © {new Date().getFullYear()} - Aplicación para dividir cuentas
+        © {new Date().getFullYear()} - Aplicación para dividir cuentas por CubitDev.com
       </footer>
     </>
   );

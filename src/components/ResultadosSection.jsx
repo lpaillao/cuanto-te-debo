@@ -1,4 +1,5 @@
 import { useAppContext } from '../context/AppContext';
+import ShareResults from './ShareResults';
 
 const ResultadosSection = () => {
   const { calcularResultados, personas, pagador, modoPropina, setModoPropina } = useAppContext();
@@ -201,6 +202,19 @@ const ResultadosSection = () => {
             "La propina se calcula sobre el subtotal de cada restaurante y se divide equitativamente entre todas las personas que consumieron."
           }
         </p>
+      </div>
+
+      {/* Nueva sección para compartir resultados */}
+      <div className="mt-8 border-t pt-6">
+        <h2 className="text-xl font-bold mb-4">Compartir resultados</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Genera una imagen con el resumen de la cuenta para compartir con los demás participantes.
+        </p>
+        
+        <ShareResults 
+          resultados={resultados} 
+          personaPagadora={personaPagadora} 
+        />
       </div>
     </section>
   );
