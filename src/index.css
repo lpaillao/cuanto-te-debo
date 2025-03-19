@@ -1,3 +1,60 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Estilos para mejorar la experiencia en dispositivos móviles */
+html {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Evitar que los elementos de entrada sean ajustados por zoom en iOS */
+@media screen and (max-width: 767px) {
+  input[type="text"],
+  input[type="number"],
+  select,
+  button {
+    font-size: 16px;
+  }
+}
+
+/* Animaciones de transición */
+.transition-height {
+  transition: max-height 0.3s ease-in-out;
+}
+
+/* Mejorar el tamaño de toque para elementos interactivos en móvil */
+@media (max-width: 640px) {
+  button, 
+  [type='button'], 
+  [type='reset'], 
+  [type='submit'] {
+    min-height: 40px;
+  }
+  
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-width: 20px;
+    min-height: 20px;
+  }
+}
+
+/* Clase de utilidad para iconos de carga */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

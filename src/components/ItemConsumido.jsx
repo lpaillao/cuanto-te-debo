@@ -26,9 +26,18 @@ const IconDivide = () => (
   </svg>
 );
 
+// Agregamos el componente IconUser que faltaba
+const IconUser = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+  </svg>
+);
+
 const ItemConsumido = ({ restauranteId, item, onEliminar }) => {
   const { personas, setRestaurantes } = useAppContext();
   const [tipoAsignacion, setTipoAsignacion] = useState('individual'); // 'individual', 'compartido'
+  const [mostrarDetalles, setMostrarDetalles] = useState(false);
+  const [mostrarAsignaciones, setMostrarAsignaciones] = useState(false);
 
   const actualizarNombreItem = (nombre) => {
     setRestaurantes(prev => 
@@ -372,73 +381,207 @@ const ItemConsumido = ({ restauranteId, item, onEliminar }) => {
             : "bg-yellow-100 text-yellow-800"
         }`}>
           {verificarAsignacionCompleta() 
-            ? "✓ Todas las unidades asignadas" 
-            : `⚠️ Faltan ${calcularUnidadesPorAsignar().toFixed(2)} unidades por asignar`}
+            ? (
+            <span className="text-green-500 flex items-center">
+              <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
+              </svg>
+              Asignado completamente
+            </span>
+            ) : (
+            <span className="text-orange-500 flex items-center">
+              <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"></path>
+              </svg>
+              Faltan {calcularUnidadesPorAsignar().toFixed(2)} por asignar
+            </span>
+          )}
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {personas.map(persona => {
-            const asignacion = item.personasAsignadas.find(
-              a => a.personaId === persona.id
-            );
-            const cantidadAsignada = asignacion ? asignacion.cantidad : 0;
-            
-            return (
-              <div key={persona.id} className="flex items-center space-x-2 border p-1.5 rounded text-sm">
-                <input
-                  type="checkbox"
-                  id={`persona-${persona.id}-item-${item.id}`}
-                  checked={cantidadAsignada > 0}
-                  onChange={() => toggleItemAPersona(persona.id)}
-                  className="mr-1"
-                />
-                <label 
-                  htmlFor={`persona-${persona.id}-item-${item.id}`}
-                  className="flex-grow truncate"
-                >
-                  {persona.nombre}
-                </label>
-                
-                {cantidadAsignada > 0 && (
-                  <div className="flex items-center space-x-1">
-                    <span className="text-xs">Cant:</span>
-                    <input
-                      type="number"
-                      value={cantidadAsignada}
-                      onChange={(e) => actualizarCantidadAsignada(
-                        persona.id, 
-                        e.target.value
-                      )}
-                      className="p-1 border rounded w-14 text-center text-xs"
-                      min={tipoAsignacion === 'compartido' ? "0.01" : "1"}
-                      max={item.cantidad}
-                      step={tipoAsignacion === 'compartido' ? "0.01" : "1"}
-                    />
-                  </div>
-                )}
-              </div>
-            );
-          })}
+        <div className="flex items-center gap-2">
+          <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+            Precio unitario: ${calcularPrecioUnitario().toFixed(2)}
+          </span>
+          
+          {item.personasAsignadas.length > 0 && (
+            <span className="text-xs bg-blue-100 px-2 py-1 rounded flex items-center">
+              <IconUser className="mr-1" />
+              {item.personasAsignadas.length} {item.personasAsignadas.length === 1 ? 'persona' : 'personas'}
+            </span>
+          )}
         </div>
-        
-        {!verificarAsignacionCompleta() && (
-          <button 
-            onClick={asignarAutomaticamente}
-            className="mt-2 bg-blue-500 text-white px-2 py-1 text-xs rounded hover:bg-blue-600 transition-colors"
-          >
-            Asignar automáticamente
-          </button>
-        )}
       </div>
       
-      <div className="flex justify-end mt-2">
+      {/* Botones de acción */}
+      <div className="flex flex-wrap gap-2 mb-3">
+        <button 
+          onClick={() => setMostrarDetalles(!mostrarDetalles)} 
+          className="px-3 py-1.5 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300 flex items-center transition-colors"
+        >
+          {mostrarDetalles ? 'Ocultar detalles' : 'Mostrar detalles'}
+          <svg 
+            className={`w-3 h-3 ml-1 transition-transform ${mostrarDetalles ? 'transform rotate-180' : ''}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path>
+          </svg>
+        </button>
+        
+        <button 
+          onClick={() => setMostrarAsignaciones(!mostrarAsignaciones)} 
+          className="px-3 py-1.5 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 flex items-center transition-colors"
+        >
+          {mostrarAsignaciones ? 'Ocultar asignaciones' : 'Asignar a personas'}
+          <svg 
+            className={`w-3 h-3 ml-1 transition-transform ${mostrarAsignaciones ? 'transform rotate-180' : ''}`} 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path>
+          </svg>
+        </button>
+        
         <button
           onClick={() => onEliminar(item.id)}
-          className="bg-red-500 text-white px-2 py-1 text-xs rounded hover:bg-red-600 transition-colors flex items-center"
+          className="px-3 py-1.5 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 flex items-center ml-auto transition-colors"
         >
-          <IconTrash className="mr-1" /> Eliminar ítem
+          <IconTrash className="mr-1" /> Eliminar
         </button>
       </div>
+      
+      {/* Detalles expandibles */}
+      {mostrarDetalles && (
+        <div className="mb-4 p-3 bg-gray-100 rounded text-sm">
+          <h4 className="font-medium mb-2">Opciones avanzadas</h4>
+          
+          <div className="flex items-center space-x-2 mb-3">
+            <div className="text-xs font-medium">Tipo de asignación:</div>
+            <div className="flex space-x-1">
+              <button
+                onClick={() => setTipoAsignacion('individual')}
+                className={`px-2 py-1 text-xs rounded-full flex items-center ${
+                  tipoAsignacion === 'individual' 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-gray-200 text-gray-700'
+                }`}
+              >
+                <IconIndividual className="mr-1" /> Individual
+              </button>
+              <button
+                onClick={() => setTipoAsignacion('compartido')}
+                className={`px-2 py-1 text-xs rounded-full flex items-center ${
+                  tipoAsignacion === 'compartido' 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-gray-200 text-gray-700'
+                }`}
+              >
+                <IconGroup className="mr-1" /> Compartido
+              </button>
+            </div>
+          </div>
+          
+          {tipoAsignacion === 'compartido' && (
+            <div className="bg-blue-100 p-2 rounded mb-3">
+              <p className="text-xs text-blue-800 mb-2">
+                Este ítem será compartido entre varias personas.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button 
+                  onClick={dividirEntreTodos}
+                  className="bg-blue-600 text-white px-2 py-1 text-xs rounded hover:bg-blue-700 transition-colors flex items-center"
+                >
+                  <IconDivide className="mr-1" /> Dividir entre todos
+                </button>
+                <button 
+                  onClick={dividirEntreSeleccionados}
+                  className="bg-indigo-600 text-white px-2 py-1 text-xs rounded hover:bg-indigo-700 transition-colors flex items-center"
+                  disabled={item.personasAsignadas.length === 0}
+                >
+                  <IconGroup className="mr-1" /> Dividir entre seleccionados
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {!verificarAsignacionCompleta() && (
+            <button 
+              onClick={asignarAutomaticamente}
+              className="bg-blue-500 text-white px-2 py-1 text-xs rounded hover:bg-blue-600 transition-colors flex items-center"
+            >
+              <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path>
+              </svg>
+              Asignar automáticamente
+            </button>
+          )}
+        </div>
+      )}
+      
+      {/* Asignación a personas - Visible solo si se expande */}
+      {mostrarAsignaciones && (
+        <div className="border-t pt-3 mt-3">
+          <div className="mb-2 flex justify-between items-center">
+            <h4 className="font-medium text-sm">Asignar a personas:</h4>
+            {item.personasAsignadas.length > 0 && (
+              <div className="text-xs text-gray-500">
+                {tipoAsignacion === 'compartido' ? 'Fracciones permitidas' : 'Unidades enteras'}
+              </div>
+            )}
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {personas.map(persona => {
+              const asignacion = item.personasAsignadas.find(a => a.personaId === persona.id);
+              const cantidadAsignada = asignacion ? asignacion.cantidad : 0;
+              
+              return (
+                <div key={persona.id} className={`flex items-center space-x-2 border p-1.5 rounded text-sm ${
+                  cantidadAsignada > 0 ? 'bg-blue-50 border-blue-200' : ''
+                }`}>
+                  <input
+                    type="checkbox"
+                    id={`persona-${persona.id}-item-${item.id}`}
+                    checked={cantidadAsignada > 0}
+                    onChange={() => toggleItemAPersona(persona.id)}
+                    className="mr-1"
+                  />
+                  <label 
+                    htmlFor={`persona-${persona.id}-item-${item.id}`}
+                    className="flex-grow truncate cursor-pointer"
+                  >
+                    {persona.nombre}
+                  </label>
+                  
+                  {cantidadAsignada > 0 && (
+                    <div className="flex items-center space-x-1">
+                      <span className="text-xs">Cant:</span>
+                      <input
+                        type="number"
+                        value={cantidadAsignada}
+                        onChange={(e) => actualizarCantidadAsignada(persona.id, e.target.value)}
+                        className="p-1 border rounded w-14 text-center text-xs"
+                        min={tipoAsignacion === 'compartido' ? "0.01" : "1"}
+                        max={item.cantidad}
+                        step={tipoAsignacion === 'compartido' ? "0.01" : "1"}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          
+          {verificarAsignacionCompleta() && (
+            <div className="mt-2 p-2 bg-green-100 text-green-800 text-xs rounded flex items-center">
+              <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+              </svg>
+              Todas las unidades asignadas correctamente
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
