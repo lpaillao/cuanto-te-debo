@@ -19,11 +19,27 @@ const CuantoTeDeboDivider = () => {
     // Actualizar metadatos para facilitar compartir
     document.title = "¿Cuánto te debo? - Divide cuentas fácilmente";
     
-    // Si se quisiera agregar metadatos más específicos, podría hacerse con:
-    // const meta = document.createElement('meta');
-    // meta.setAttribute('property', 'og:title');
-    // meta.setAttribute('content', '¿Cuánto te debo?');
-    // document.head.appendChild(meta);
+    // Agregar metadatos más específicos para SEO y Open Graph
+    const metaTags = [
+      { property: 'og:title', content: '¿Cuánto te debo? - Divide cuentas fácilmente' },
+      { property: 'og:description', content: 'Aplicación web gratuita para dividir cuentas de restaurantes y calcular lo que cada uno debe pagar.' },
+      { property: 'og:url', content: 'https://cuanto-te-debo.cubitdev.com' },
+      { property: 'og:type', content: 'website' },
+      { name: 'description', content: 'Divide cuentas y calcula lo que cada persona debe pagar de forma rápida y sencilla.' }
+    ];
+    
+    // Eliminar metas existentes para evitar duplicados
+    document.querySelectorAll('meta[property^="og:"], meta[name="description"]')
+      .forEach(el => el.remove());
+    
+    // Añadir nuevas metas
+    metaTags.forEach(tag => {
+      const meta = document.createElement('meta');
+      Object.entries(tag).forEach(([attr, value]) => {
+        meta.setAttribute(attr, value);
+      });
+      document.head.appendChild(meta);
+    });
   }, []);
 
   return (
